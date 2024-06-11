@@ -1,22 +1,30 @@
 const express = require("express");
-const uuid = require("uuid");
 const app = express();
-
+const uuid = require("uuid");
+const Joi = require("joi");
 const port = 5000;
-
 app.use(express.json());
 
-const { Response, QrcodeGenerator } = require("./utils/response");
+const employeeRegistrationSchema = Joi.object({
+  employeeName: Joi.string().min(3).max(40).required(),
+  employeeDepartment: Joi.string().min(3).max(40).required(),
+});
+
+const { Response, QrcodeGenerator } = require("./utils/helper");
 
 // endpoint routes
 app.get("/", (req, res) => {
-  // res.status(200).json(Response(true, "Server Active and Reachable 🆗"));
+  res.status(200).json(Response(true, "Server Active and Reachable 🆗"));
   res.send(uuid.v4());
 });
 
 app.post("/register", (req, res) => {
-  // console.table(req.body);
-  // const { employeeName, employeeDepartment } = req.body;
+  const schemaValidation = employeeRegistrationSchema.validate(req.body);
+  if (schemaValidation.error)
+    return res
+      .status(442)
+      .json(Response(false, schemaValidation.error.message));
+  console.log(schemaValidation);
   const response = QrcodeGenerator(req.body);
 
   if (response) {

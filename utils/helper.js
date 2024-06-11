@@ -1,6 +1,7 @@
 const qrcode = require("qrcode");
 const uuid = require("uuid");
 
+
 /**
  *
  * @param {boolean} status
@@ -18,10 +19,10 @@ exports.Response = (status, message) => {
  */
 exports.QrcodeGenerator = (data) => {
   try {
-    const uniqueId = uuid.v4();
-    data.employeeId = uniqueId //add uniqueId for the employee
-    const dataInStringFormat = JSON.stringify(data);
-    const path = `${uuid.v4()}.png`;
+    const uniqueId = uuid.v4().replace("-","");
+    data.employeeId = uniqueId; //add uniqueId for the employee
+    const dataInStringFormat = JSON.stringify(data); //converts data to string
+    const path = `${uuid.v4()}.png`; //set file path
     qrcode.toFile(path, dataInStringFormat); //generate qrcode
     return true;
   } catch (err) {
